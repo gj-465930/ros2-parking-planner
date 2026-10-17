@@ -11,7 +11,59 @@ find_package(ament_cmake REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
+# parking_core
+add_library(parking_core STATIC
+  src/core/core_smoke.cpp
+)
+
+target_include_directories(parking_core PUBLIC
+  include
+)
+
+target_compile_features(parking_core PUBLIC cxx_std_17)
+
+# runtime 
+find_package(rclcpp REQUIRED)
+
+add_library(parking_runtime STATIC
+  src/runtime/parking_node.cpp
+)
+
+target_include_directories(parking_runtime PUBLIC
+  include
+)
+
+target_compile_features(parking_runtime PUBLIC cxx_std_17)
+
+ament_target_dependencies(parking_runtime PUBLIC
+  rclcpp
+)
+
+target_link_libraries(parking_runtime PRIVATE
+  parking_core
+)
+
+# main
+add_executable(parking_node
+  src/main.cpp
+)
+
+target_link_libraries(parking_node PRIVATE
+  parking_runtime
+)
+
+
 if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
+
+  ament_add_gtest(test_core_smoke
+    test/core/test_core_smoke.cpp
+  )
+
+  target_link_libraries(test_core_smoke
+    parking_core
+  )
+
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
   # comment the line when a copyright and license is added to all source files
@@ -22,5 +74,17 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
+
+install(TARGETS parking_core parking_runtime
+  ARCHIVE DESTINATION lib
+)
+
+install(TARGETS parking_node
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
+)
+
+install(DIRECTORY include/
+  DESTINATION include
+)
 
 ament_package()
