@@ -24,24 +24,33 @@ target_compile_features(parking_core PUBLIC cxx_std_17)
 
 # runtime 
 find_package(rclcpp REQUIRED)
+find_package(visualization_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
 add_library(parking_runtime STATIC
   src/runtime/parking_node.cpp
+  src/visualization/visualizer.cpp
 )
 
-target_include_directories(parking_runtime PUBLIC
+target_include_directories(parking_runtime 
+PUBLIC
   include
 )
 
 target_compile_features(parking_runtime PUBLIC cxx_std_17)
 
-ament_target_dependencies(parking_runtime PUBLIC
+ament_target_dependencies(parking_runtime 
+PUBLIC
   rclcpp
+  visualization_msgs
+  geometry_msgs
 )
 
-target_link_libraries(parking_runtime PRIVATE
+target_link_libraries(parking_runtime 
+PRIVATE
   parking_core
 )
+
 
 # main
 add_executable(parking_node
@@ -85,6 +94,10 @@ install(TARGETS parking_node
 
 install(DIRECTORY include/
   DESTINATION include
+)
+
+install(DIRECTORY launch rviz
+  DESTINATION share/${PROJECT_NAME}
 )
 
 ament_package()
