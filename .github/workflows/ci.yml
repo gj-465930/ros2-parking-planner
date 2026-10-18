@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-22.04
+    container: ros:humble-ros-base
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install dependencies
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            build-essential \
+            cmake \
+            python3-colcon-common-extensions \
+            python3-rosdep
+
+          if [ ! -f /etc/ros/rosdep/sources.list.d/20-default.list ]; then
+            rosdep init
+          fi
+
+          rosdep update --rosdistro humble
+
+          source /opt/ros/humble/setup.bash
+          rosdep install --from-paths src --ignore-src \
+            --rosdistro humble -y
+
+      - name: Build
+        id: build
+        run: |
+          source /opt/ros/humble/setup.bash
+
+          colcon build --packages-select parking_planner \
+            --event-handlers console_direct+ \
+            --cmake-args \
+              -DBUILD_TESTING=ON \
+              -DCMAKE_BUILD_TYPE=Release
+
+      - name: Test
+        run: |
+          source /opt/ros/humble/setup.bash
+          source install/setup.bash
+
+          colcon test --packages-select parking_planner \
+            --return-code-on-test-failure \
+            --event-handlers console_direct+ \
+            --ctest-args -R '^test_' \
+              --no-tests=error \
+              --output-on-failure
+
+      - name: Show test results
+        if: ${{ always() && steps.build.outcome == 'success' }}
+        run: |
+          source /opt/ros/humble/setup.bash
+          colcon test-result --verbose
