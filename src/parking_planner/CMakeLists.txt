@@ -16,6 +16,7 @@ add_library(parking_core STATIC
   src/core/core_smoke.cpp
   src/core/geometry/angle.cpp
   src/core/geometry/vec2d.cpp
+  src/core/geometry/transform2d.cpp
 )
 
 target_include_directories(parking_core PUBLIC
@@ -88,6 +89,14 @@ if(BUILD_TESTING)
   )
 
   target_link_libraries(test_vec2d
+    parking_core
+  )
+
+  ament_add_gtest(test_transform2d
+    test/core/geometry/test_transform2d.cpp
+  )
+
+  target_link_libraries(test_transform2d
     parking_core
   )
 
