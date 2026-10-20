@@ -14,6 +14,8 @@ find_package(ament_cmake REQUIRED)
 # parking_core
 add_library(parking_core STATIC
   src/core/core_smoke.cpp
+  src/core/geometry/angle.cpp
+  src/core/geometry/vec2d.cpp
 )
 
 target_include_directories(parking_core PUBLIC
@@ -70,6 +72,22 @@ if(BUILD_TESTING)
   )
 
   target_link_libraries(test_core_smoke
+    parking_core
+  )
+
+  ament_add_gtest(test_angle
+    test/core/geometry/test_angle.cpp
+  )
+
+  target_link_libraries(test_angle
+    parking_core
+  )
+
+  ament_add_gtest(test_vec2d
+    test/core/geometry/test_vec2d.cpp
+  )
+
+  target_link_libraries(test_vec2d
     parking_core
   )
 
