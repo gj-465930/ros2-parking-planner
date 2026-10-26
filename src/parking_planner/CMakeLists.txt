@@ -19,6 +19,7 @@ add_library(parking_core STATIC
   src/core/geometry/transform2d.cpp
   src/core/geometry/line_segment2d.cpp
   src/core/geometry/oriented_rectangle2d.cpp
+  src/core/geometry/convex_polygon2d.cpp
 )
 
 target_include_directories(parking_core PUBLIC
@@ -115,6 +116,14 @@ if(BUILD_TESTING)
   )
 
   target_link_libraries(test_oriented_rectangle2d
+    parking_core
+  )
+
+  ament_add_gtest(test_convex_polygon2d
+    test/core/geometry/test_convex_polygon2d.cpp
+  )
+
+  target_link_libraries(test_convex_polygon2d
     parking_core
   )
 
