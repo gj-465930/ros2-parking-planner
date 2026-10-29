@@ -53,6 +53,18 @@ public:
   int height() const { return height_; };
 
   /**
+   * @brief 获取地图世界 x 上边界，单位米。
+   * 地图的点归属范围不包含此边界。
+   */
+  double maxX() const { return max_x_; }
+
+  /**
+   * @brief 获取地图世界 y 上边界，单位米。
+   * 地图的点归属范围不包含此边界。
+   */
+  double maxY() const { return max_y_; }
+
+  /**
    * @brief 判断整数索引是否位于地图内。
    * @param index 待检查的格子索引。
    * @return 两个方向均未越界时返回 true。
