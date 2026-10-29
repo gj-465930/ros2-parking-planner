@@ -23,6 +23,7 @@ add_library(parking_core STATIC
   src/core/vehicle/vehicle_params.cpp
   src/core/vehicle/kinematic_bicycle_model.cpp
   src/core/map/occupancy_grid.cpp
+  src/core/map/environment.cpp
 )
 
 target_include_directories(parking_core PUBLIC
@@ -151,6 +152,14 @@ if(BUILD_TESTING)
   )
 
   target_link_libraries(test_occupancy_grid
+    parking_core
+  )
+
+  ament_add_gtest(test_environment
+  test/core/map/test_environment.cpp
+  )
+
+  target_link_libraries(test_environment
     parking_core
   )
 
