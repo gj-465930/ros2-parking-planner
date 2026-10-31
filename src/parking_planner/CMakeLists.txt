@@ -10,6 +10,12 @@ find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
+find_package(yaml-cpp REQUIRED)
+
+# 兼容不同版本导出的 target 名称。
+if(NOT TARGET yaml-cpp::yaml-cpp AND TARGET yaml-cpp)
+  add_library(yaml-cpp::yaml-cpp ALIAS yaml-cpp)
+endif()
 
 # parking_core
 add_library(parking_core STATIC
@@ -24,11 +30,14 @@ add_library(parking_core STATIC
   src/core/vehicle/kinematic_bicycle_model.cpp
   src/core/map/occupancy_grid.cpp
   src/core/map/environment.cpp
+  src/core/scenario/scenario_loader.cpp
 )
 
 target_include_directories(parking_core PUBLIC
   include
 )
+
+target_link_libraries(parking_core PRIVATE yaml-cpp::yaml-cpp)
 
 target_compile_features(parking_core PUBLIC cxx_std_17)
 
@@ -163,6 +172,19 @@ if(BUILD_TESTING)
     parking_core
   )
 
+
+    ament_add_gtest(test_scenario_loader
+    test/core/scenario/test_scenario_loader.cpp
+  )
+
+  target_link_libraries(test_scenario_loader
+    parking_core
+    yaml-cpp::yaml-cpp
+  )
+
+  target_compile_definitions(test_scenario_loader PRIVATE
+    PARKING_SCENARIO_DIR="${CMAKE_CURRENT_SOURCE_DIR}/scenarios"
+  )
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
   # comment the line when a copyright and license is added to all source files
@@ -186,7 +208,7 @@ install(DIRECTORY include/
   DESTINATION include
 )
 
-install(DIRECTORY launch rviz
+install(DIRECTORY launch rviz scenarios
   DESTINATION share/${PROJECT_NAME}
 )
 
