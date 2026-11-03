@@ -1,0 +1,54 @@
+name: parallel_parking
+
+map:
+  origin: [0.0, 0.0]
+  resolution: 0.2
+  width: 100
+  height: 80
+
+vehicle:
+  wheelbase: 2.8
+  width: 1.8
+  front_overhang: 1.0
+  rear_overhang: 1.0
+  max_steering_angle: 0.6
+
+# 起点后轴中心，车头朝 +x。
+start:
+  x: 4.0
+  y: 11.0
+  theta: 0.0
+
+# 目标后轴中心，车辆几何中心位于 (11.0, 4.0)。
+goal:
+  x: 9.6
+  y: 4.0
+  theta: 0.0
+
+parking_space:
+  center: [11.0, 4.0]
+  heading: 0.0
+  length: 5.6
+  width: 2.8
+
+obstacles:
+  # 左侧已停车辆的简化轮廓。
+  - vertices:
+      - [2.0, 3.0]
+      - [7.0, 3.0]
+      - [7.0, 5.0]
+      - [2.0, 5.0]
+
+  # 右侧已停车辆的简化轮廓。
+  - vertices:
+      - [15.0, 3.0]
+      - [19.0, 3.0]
+      - [19.0, 5.0]
+      - [15.0, 5.0]
+
+  # 下方路沿，使用有厚度的矩形表示。
+  - vertices:
+      - [1.0, 1.0]
+      - [19.0, 1.0]
+      - [19.0, 2.0]
+      - [1.0, 2.0]

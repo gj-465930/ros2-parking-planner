@@ -1,3 +1,4 @@
+#include <exception>
 #include <memory>
 
 #include <rclcpp/rclcpp.hpp>
@@ -7,10 +8,19 @@
 int main(int argc, char **argv) {
   rclcpp::init(argc, argv);
 
-  auto node = std::make_shared<parking_planner::runtime::ParkingNode>();
-  rclcpp::spin(node);
+  int exit_code = 0;
+
+  try {
+    auto node = std::make_shared<parking_planner::runtime::ParkingNode>();
+    rclcpp::spin(node);
+  } catch (const std::exception &error) {
+    RCLCPP_ERROR(rclcpp::get_logger("parking_main"), "Parking node failed: %s",
+                 error.what());
+
+    exit_code = 1;
+  }
 
   rclcpp::shutdown();
 
-  return 0;
+  return exit_code;
 }

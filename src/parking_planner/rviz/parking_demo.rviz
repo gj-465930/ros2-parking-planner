@@ -6,6 +6,8 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /MarkerArray1
+        - /MarkerArray1/Topic1
       Splitter Ratio: 0.5
     Tree Height: 555
   - Class: rviz_common/Selection
@@ -51,10 +53,16 @@ Visualization Manager:
       Enabled: true
       Name: MarkerArray
       Namespaces:
-        vehicle: true
+        goal_pose: true
+        goal_vehicle: true
+        map_boundary: true
+        obstacles: true
+        parking_space: true
+        start_pose: true
+        start_vehicle: true
       Topic:
         Depth: 5
-        Durability Policy: Volatile
+        Durability Policy: Transient Local
         History Policy: Keep Last
         Reliability Policy: Reliable
         Value: /parking/markers
@@ -105,7 +113,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 10
+      Distance: 64.5947494506836
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -120,10 +128,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.5053979158401489
+      Pitch: 0.6402038335800171
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.785398006439209
+      Yaw: 0.8353979587554932
     Saved: ~
 Window Geometry:
   Displays:

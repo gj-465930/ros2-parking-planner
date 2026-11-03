@@ -10,21 +10,33 @@ find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
+find_package(yaml-cpp REQUIRED)
+
+# 兼容不同版本导出的 target 名称。
+if(NOT TARGET yaml-cpp::yaml-cpp AND TARGET yaml-cpp)
+  add_library(yaml-cpp::yaml-cpp ALIAS yaml-cpp)
+endif()
 
 # parking_core
 add_library(parking_core STATIC
-  src/core/core_smoke.cpp
   src/core/geometry/angle.cpp
   src/core/geometry/vec2d.cpp
   src/core/geometry/transform2d.cpp
   src/core/geometry/line_segment2d.cpp
   src/core/geometry/oriented_rectangle2d.cpp
   src/core/geometry/convex_polygon2d.cpp
+  src/core/vehicle/vehicle_params.cpp
+  src/core/vehicle/kinematic_bicycle_model.cpp
+  src/core/map/occupancy_grid.cpp
+  src/core/map/environment.cpp
+  src/core/scenario/scenario_loader.cpp
 )
 
 target_include_directories(parking_core PUBLIC
   include
 )
+
+target_link_libraries(parking_core PRIVATE yaml-cpp::yaml-cpp)
 
 target_compile_features(parking_core PUBLIC cxx_std_17)
 
@@ -53,7 +65,7 @@ PUBLIC
 )
 
 target_link_libraries(parking_runtime 
-PRIVATE
+PUBLIC
   parking_core
 )
 
@@ -70,14 +82,6 @@ target_link_libraries(parking_node PRIVATE
 
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
-
-  ament_add_gtest(test_core_smoke
-    test/core/test_core_smoke.cpp
-  )
-
-  target_link_libraries(test_core_smoke
-    parking_core
-  )
 
   ament_add_gtest(test_angle
     test/core/geometry/test_angle.cpp
@@ -127,6 +131,59 @@ if(BUILD_TESTING)
     parking_core
   )
 
+  ament_add_gtest(test_vehicle_params
+    test/core/vehicle/test_vehicle_params.cpp
+  )
+
+  target_link_libraries(test_vehicle_params
+    parking_core
+  )
+
+  ament_add_gtest(test_kinematic_bicycle_model
+  test/core/vehicle/test_kinematic_bicycle_model.cpp
+  )
+
+  target_link_libraries(test_kinematic_bicycle_model
+    parking_core
+  )
+
+  ament_add_gtest(test_occupancy_grid
+  test/core/map/test_occupancy_grid.cpp
+  )
+
+  target_link_libraries(test_occupancy_grid
+    parking_core
+  )
+
+  ament_add_gtest(test_environment
+  test/core/map/test_environment.cpp
+  )
+
+  target_link_libraries(test_environment
+    parking_core
+  )
+
+
+  ament_add_gtest(test_scenario_loader
+    test/core/scenario/test_scenario_loader.cpp
+  )
+
+  target_link_libraries(test_scenario_loader
+    parking_core
+    yaml-cpp::yaml-cpp
+  )
+
+  ament_add_gtest(test_visualizer
+    test/visualization/test_visualizer.cpp
+  )
+
+  target_link_libraries(test_visualizer
+    parking_runtime
+  )
+
+  target_compile_definitions(test_scenario_loader PRIVATE
+    PARKING_SCENARIO_DIR="${CMAKE_CURRENT_SOURCE_DIR}/scenarios"
+  )
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
   # comment the line when a copyright and license is added to all source files
@@ -150,7 +207,7 @@ install(DIRECTORY include/
   DESTINATION include
 )
 
-install(DIRECTORY launch rviz
+install(DIRECTORY launch rviz scenarios
   DESTINATION share/${PROJECT_NAME}
 )
 
