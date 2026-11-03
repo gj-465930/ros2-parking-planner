@@ -19,7 +19,6 @@ endif()
 
 # parking_core
 add_library(parking_core STATIC
-  src/core/core_smoke.cpp
   src/core/geometry/angle.cpp
   src/core/geometry/vec2d.cpp
   src/core/geometry/transform2d.cpp
@@ -66,7 +65,7 @@ PUBLIC
 )
 
 target_link_libraries(parking_runtime 
-PRIVATE
+PUBLIC
   parking_core
 )
 
@@ -83,14 +82,6 @@ target_link_libraries(parking_node PRIVATE
 
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
-
-  ament_add_gtest(test_core_smoke
-    test/core/test_core_smoke.cpp
-  )
-
-  target_link_libraries(test_core_smoke
-    parking_core
-  )
 
   ament_add_gtest(test_angle
     test/core/geometry/test_angle.cpp
@@ -173,13 +164,21 @@ if(BUILD_TESTING)
   )
 
 
-    ament_add_gtest(test_scenario_loader
+  ament_add_gtest(test_scenario_loader
     test/core/scenario/test_scenario_loader.cpp
   )
 
   target_link_libraries(test_scenario_loader
     parking_core
     yaml-cpp::yaml-cpp
+  )
+
+  ament_add_gtest(test_visualizer
+    test/visualization/test_visualizer.cpp
+  )
+
+  target_link_libraries(test_visualizer
+    parking_runtime
   )
 
   target_compile_definitions(test_scenario_loader PRIVATE
