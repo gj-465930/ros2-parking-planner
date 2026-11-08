@@ -30,6 +30,7 @@ add_library(parking_core STATIC
   src/core/map/occupancy_grid.cpp
   src/core/map/environment.cpp
   src/core/scenario/scenario_loader.cpp
+  src/core/search/grid_astar.cpp
 )
 
 target_include_directories(parking_core PUBLIC
@@ -184,6 +185,15 @@ if(BUILD_TESTING)
   target_compile_definitions(test_scenario_loader PRIVATE
     PARKING_SCENARIO_DIR="${CMAKE_CURRENT_SOURCE_DIR}/scenarios"
   )
+
+  ament_add_gtest(test_grid_astar
+    test/core/search/test_grid_astar.cpp
+  )
+
+  target_link_libraries(test_grid_astar
+    parking_core
+  )
+
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
   # comment the line when a copyright and license is added to all source files
