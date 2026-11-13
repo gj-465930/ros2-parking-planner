@@ -31,6 +31,7 @@ add_library(parking_core STATIC
   src/core/map/environment.cpp
   src/core/scenario/scenario_loader.cpp
   src/core/search/grid_astar.cpp
+  src/core/search/distance_to_goal_map.cpp
 )
 
 target_include_directories(parking_core PUBLIC
@@ -191,6 +192,14 @@ if(BUILD_TESTING)
   )
 
   target_link_libraries(test_grid_astar
+    parking_core
+  )
+
+  ament_add_gtest(test_distance_to_goal_map
+    test/core/search/test_distance_to_goal_map.cpp
+  )
+
+  target_link_libraries(test_distance_to_goal_map
     parking_core
   )
 
